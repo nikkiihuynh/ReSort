@@ -41,6 +41,45 @@ def login_user(email, password):
     cursor.close()
     conn.close()
 
+## TODO: save user waste history
+def save_to_history(user_id, item, disposal_method):
+    conn = connectToDB()
+    cursor = conn.cursor()
+
+    try:
+        if disposal_method.lower() == 'trash':
+            cursor.execute("INSERT INTO Trash (t_material) VALUES (%s)", (item,))
+            trash_id = cursor.lastrowid
+            cursor.execute("""
+                INSERT INTO Sorted (user_ID, trash_ID)
+                VALUES (%s, %s)""", (user_id, trash_id))
+        
+        elif disposal_method.lower() == 'recycle':
+            cursor.execute("INSERT INTO Recycle (r_material) VALUES (%s)", (item,))
+            recycle_id = cursor.lastrowid
+            cursor.execute("""
+                INSERT INTO Sorted (user_ID, recycle_ID)
+                VALUES (%s, %s)""", (user_id, recycle_id))
+            
+        elif disposal_method.lower() == 'compost':
+            cursor.execute("INSERT INTO Compost (c_material) VALUES (%s)", (item,))
+            compost_id = cursor.lastrowid
+            cursor.execute("""
+                INSERT INTO Sorted (user_ID, compost_ID)
+                VALUES (%s, %s)""", (user_id, compost_id))
+
+        conn.commit()
+        
+    finally:
+        cursor.close()
+        conn.close()
+
+## TODO: Make user history accessible to the user
+
+
+
+
+
 #UI frontend code 
 
 st.markdown(
