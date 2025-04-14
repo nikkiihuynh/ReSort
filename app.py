@@ -81,13 +81,8 @@ if selected == "Sort":
     user_input = st.text_input("Describe the waste you want to dispose:")
 
     if st.button("Sort", key="send_msg") and user_input:
-        response_text = sort.get_chatgpt_response(user_input)
+        response_text = sort.get_gemini_response(user_input)
         st.write(response_text)
-
-    with st.expander("History"):
-        for msg in st.session_state['messages']:
-            role = "You" if msg["role"] == "user" else "Assistant" if msg["role"] == "assistant" else "System"
-            st.write(f"**{role}:** {msg['content']}")
 if selected == "Login":
     with placeholder.form("login"):
         st.markdown("#### Login")
