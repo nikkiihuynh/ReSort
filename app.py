@@ -76,7 +76,53 @@ def save_to_history(user_id, item, disposal_method):
         conn.close()
 
 ## TODO: Make user history accessible to the user
+def get_user_history(user_id):
+    conn = connectToDB()
+    if not conn:
+        return []
+    
+    cursor = conn.cursor(dictionary=True)
+    try:
+        history = [] # get all items sorted by user
 
+        # trash history
+        cursor.execute("""
+            SELECT t.t_material AS item, 'Trash' AS disposal_method, s.timestamp
+            FROM Sorted s
+            JOIN Trash t ON s.trash_ID = t.trash_ID
+            WHERE s.user_ID = %s
+            ORDER BY s.timestamp DESC
+        """, (user_id))
+        history.extend(cursor.fetchall())
+
+        # recycle history
+        cursor.execute("""
+            SELECT r.r_material AS item, 'Recycle' AS disposal_method, s.timestamp
+            FROM Sorted s
+            JOIN Recycle r ON s.recycle_ID = r.recycle_ID
+            WHERE s.user_ID = %s
+            ORDER BY s.timestamp DESC
+        """, (user_id))
+        history.extend(cursor.fetchall())
+
+        # compost history
+        cursor.execute("""
+            SELECT c.c_material AS item, 'Compost' AS disposal_method, s.timestamp
+            FROM Sorted s
+            JOIN Compost c ON s.compost_ID = c.compost_ID
+            WHERE s.user_ID = %s
+            ORDER BY s.timestamp DESC
+        """, (user_id))
+        history.extend(cursor.fetchall())
+
+        history.sort(key=lambda x: x['timestamp'], reverse=True) # timestamp of when user disposed of something
+        return history[:50] # only show the 50 most recent items disposed
+    except mysql.connector.Error as err:
+        st.error(f"Error getting history: {err}")
+        return []
+    finally:
+        cursor.close()
+        conn.close()
 
 
 
