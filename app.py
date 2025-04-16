@@ -42,23 +42,23 @@ def fetch_users_from_db():
     cursor.close()
     conn.close()
 
-    names, emails, passwords = [], [], []
+    names, passwords, emails = [], [], []
     for name, password, email in users:
-        names.append(name)
         emails.append(email)
+        names.append(name)
         passwords.append(password)
 
-    return names, emails, passwords
+    return emails, names, passwords
 
 # Now usernames are emails
-names, emails, hashed_passwords = fetch_users_from_db()
+emails, names, hashed_passwords = fetch_users_from_db()
 
 authenticator = stauth.Authenticate(
-    names, emails, hashed_passwords,  # emails used as usernames
-    "resort_app", "abcdef", cookie_expiry_days=30
+    emails, names, hashed_passwords,  # emails used as usernames
+    "resort_app", "abcdef", cookie_expiry_days=30,
 )
 
-name, authentication_status, email = authenticator.login("Login", "main")
+email, authentication_status, name = authenticator.login("Login", "main")
 
 if (
     "authentication_status" in st.session_state
