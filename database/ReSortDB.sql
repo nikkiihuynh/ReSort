@@ -1,27 +1,31 @@
 CREATE DATABASE resort;
 USE resort;
 
+
 CREATE TABLE User (
 	user_ID INT AUTO_INCREMENT PRIMARY KEY,
-	email VARCHAR(255) UNIQUE NOT NULL,
 	name VARCHAR(255) UNIQUE NOT NULL,
 	password VARCHAR(255) UNIQUE NOT NULL
 );
+
 
 CREATE TABLE Trash (
 	trash_ID INT PRIMARY KEY,
     t_material VARCHAR(255) NOT NULL
 );
 
+
 CREATE TABLE Recycle (
 	recycle_ID INT PRIMARY KEY,
     r_material VARCHAR(255) NOT NULL
 );
 
+
 CREATE TABLE Compost (
 	compost_ID INT PRIMARY KEY,
     c_material VARCHAR(255) NOT NULL
 );
+
 
 CREATE TABLE Sorted (
 	user_ID INT,
@@ -34,6 +38,23 @@ CREATE TABLE Sorted (
     FOREIGN KEY (recycle_ID) REFERENCES Recycle(recycle_ID) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (compost_ID) REFERENCES Compost(compost_ID) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+ALTER TABLE User
+ADD email varchar(255);
+
+ALTER TABLE Sorted DROP FOREIGN KEY sorted_ibfk_1;  -- For user_ID
+ALTER TABLE Sorted DROP FOREIGN KEY sorted_ibfk_2;  -- For trash_ID
+ALTER TABLE Sorted DROP FOREIGN KEY sorted_ibfk_3;  -- For recycle_ID
+ALTER TABLE Sorted DROP FOREIGN KEY sorted_ibfk_4;  -- For compost_ID
+
+ALTER TABLE Trash MODIFY trash_ID INT AUTO_INCREMENT;
+ALTER TABLE Recycle MODIFY recycle_ID INT AUTO_INCREMENT;
+ALTER TABLE Compost MODIFY compost_ID INT AUTO_INCREMENT;
+
+ALTER TABLE Trash DROP COLUMN user_id;
+ALTER TABLE Recycle DROP COLUMN user_id;
+ALTER TABLE Compost DROP COLUMN user_id;
+
 
 CREATE TABLE SortingHistory (
 	history_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -52,3 +73,6 @@ ALTER TABLE Recycle ADD FOREIGN KEY (user_id) REFERENCES User(user_ID) ON UPDATE
 
 ALTER TABLE Compost ADD COLUMN user_id INT;
 ALTER TABLE Compost ADD FOREIGN KEY (user_id) REFERENCES User(user_ID) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+
