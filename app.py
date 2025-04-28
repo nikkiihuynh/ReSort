@@ -217,6 +217,29 @@ if authentication_status and "selected" in st.session_state:
             "https://media.istockphoto.com/id/962933762/vector/ecology-and-waste-global-eco-friendly-plastic.jpg?s=612x612&w=0&k=20&c=RdbOw__qI_Vc0W8pU0dEiO9--Unfs-iXUEqQOCP-1HE=",
             width=400
         )
+            # General static tips for all users
+        st.markdown('### General Waste Disposal Tips')
+        tips = [
+            'Clean and dry recyclables before placing them in the bin to avoid contamination.',
+            'Flatten cardboard boxes to save space in recycling bins.',
+            'Check your local guidelines for accepted materials, as they vary by location.',
+            'Avoid bagging recyclables in plastic bags; most facilities cannot process them.',
+            'Keep a small compost bin in your kitchen for food scraps to reduce landfill waste.',
+        ]
+        for tip in tips:
+            st.markdown(f'- {tip}')
+
+        # Button to fetch personalized tips based on user history
+        if st.button('Get personalized tips'):
+            user_id = get_user_id(email)
+            if user_id:
+                history = get_sorting_history(user_id)
+                if history:
+                    tips_text = sort.get_targeted_tips(history)
+                    st.subheader('Your Personalized Tips')
+                    st.write(tips_text)
+                else:
+                    st.info('No sorting history available to generate personalized tips.')
 
     elif st.session_state.selected == "Sort":
         st.subheader("Sort Waste into Trash, Recycle, or Compost")
@@ -230,13 +253,17 @@ if authentication_status and "selected" in st.session_state:
 
         if 'last_response' in st.session_state and st.session_state.get('sort_clicked', False):
             if st.button("Save"):
-                disposal_method, method = parse_ai_response(st.session_state['last_response'])
-                user_id = get_user_id(email)
-                if user_id and user_input and disposal_method:
+                disposal_method, explanation = parse_ai_response(st.session_state['last_response'])
+                valid_methods = ['trash', 'recycle', 'compost']
+                # Basic sanity checks
+                if (disposal_method.lower() in valid_methods
+                    and user_input.strip()
+                    and len(user_input.strip()) > 2):
+                    user_id = get_user_id(email)
                     save_to_history(user_id, user_input, disposal_method)
-                    st.success("Saved to history!")
+                    st.success('Saved to history!')
                 else:
-                    st.error("Could not save. Missing information.")
+                    st.error('Cannot save: invalid input or disposal method')
 
     elif st.session_state.selected == "History":
         st.subheader("View how much waste you have sorted")
