@@ -217,7 +217,7 @@ if authentication_status and "selected" in st.session_state:
             "https://media.istockphoto.com/id/962933762/vector/ecology-and-waste-global-eco-friendly-plastic.jpg?s=612x612&w=0&k=20&c=RdbOw__qI_Vc0W8pU0dEiO9--Unfs-iXUEqQOCP-1HE=",
             width=400
         )
-            # General static tips for all users
+        # General static tips for all users
         st.markdown('### General Waste Disposal Tips')
         tips = [
             'Clean and dry recyclables before placing them in the bin to avoid contamination.',
