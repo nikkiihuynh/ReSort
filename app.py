@@ -7,23 +7,26 @@ from streamlit_authenticator import Hasher
 import plotly.express as px
 import pandas as pd
 
-# --- Styling ---
-st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
-html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif;
-}
-.title {
-    position: relative;
-    top: -70px;
-    text-align: left;
-}
-</style>
-""", unsafe_allow_html=True)
+# UI styling
+st.markdown(
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif;
+    }
+    .title {
+        position: relative;
+        top: -70px;
+        text-align: left;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 st.markdown('<h1 class="title">ReSort</h1>', unsafe_allow_html=True)
 
-# --- Database Connection ---
 def connectToDB():
     return mysql.connector.connect(
         host='127.0.0.1',
@@ -32,7 +35,6 @@ def connectToDB():
         database='resort'
     )
 
-# --- Fetch Users from DB ---
 def fetch_users_from_db():
     conn = connectToDB()
     cursor = conn.cursor()
@@ -40,111 +42,70 @@ def fetch_users_from_db():
     users = cursor.fetchall()
     cursor.close()
     conn.close()
+
     names, passwords, emails = [], [], []
     for name, password, email in users:
         emails.append(email)
         names.append(name)
         passwords.append(password)
+
     return emails, names, passwords
 
+# Now usernames are emails
 emails, names, hashed_passwords = fetch_users_from_db()
 
-for key in ["authentication_status", "username", "name", "selected"]:
-    if key not in st.session_state:
-        st.session_state[key] = None
-
-credentials = {
-    'usernames': {
-        email: {
-            'name': name,
-            'password': hashed_pw,
-            'email': email,
-            'roles': []  
-        } for email, name, hashed_pw in zip(emails, names, hashed_passwords)
-    }
-}
-
-# --- Authentication Setup ---
 authenticator = stauth.Authenticate(
-    credentials,
-    "resort_app",  # cookie_name
-    "abcdef",      # key
-    cookie_expiry_days=30,
+    emails, names, hashed_passwords,  # emails used as usernames
+    "resort_app", "abcdef", cookie_expiry_days=30,
 )
 
-if "authentication_status" not in st.session_state:
-    st.session_state["authentication_status"] = None
-if "username" not in st.session_state:
-    st.session_state["username"] = None
-if "name" not in st.session_state:
-    st.session_state["name"] = None
-if "selected" not in st.session_state:
-    st.session_state["selected"] = None
+email, authentication_status, name = authenticator.login("Login", "main")
+
+if (
+    "authentication_status" in st.session_state
+    and st.session_state["authentication_status"]
+    and st.session_state.get("logout") is None
+):
+    st.session_state["logout"] = True
+    st.rerun()
     
-# --- Login ---
-fields = {"Form name": "Login", "Username": "Email", "Password": "Password", "Login": "Login"}
+# Handle login errors/messages
+if authentication_status is False:
+    st.error("Email is incorrect")
+elif authentication_status is None:
+    st.warning("Please enter your email and password")
 
-if st.session_state.get("authentication_status") is None:
-    name, authentication_status, username = authenticator.login(fields=fields, location="main")
-    st.session_state["authentication_status"] = authentication_status
-    st.session_state["username"] = username
-    st.session_state["name"] = name
-else:
-    authentication_status = st.session_state.get("authentication_status")
-    username = st.session_state.get("username")
-    name = st.session_state.get("name")
 
-# --- Save login info ---
-if "authentication_status" not in st.session_state:
-    st.session_state["authentication_status"] = None
-if "username" not in st.session_state:
-    st.session_state["username"] = None
-if "name" not in st.session_state:
-    st.session_state["name"] = None
+selected = None
 
-authentication_status = st.session_state.get("authentication_status")
-email = st.session_state.get("username")
-name = st.session_state.get("name")
-
-# --- Sidebar ---
+# Sidebar menu logic
 with st.sidebar:
-    # Initialize menu_options and menu_icons with default values
-    menu_options = ["Register"]
-    menu_icons = ["key"]
-    
-    # Update based on authentication status
-    if st.session_state.get("authentication_status") is True:
-        menu_options = ["Home", "Sort", "History"]
-        menu_icons = ["house", "recycle", "book"]
-    elif st.session_state.get("authentication_status") is False:
-        menu_options = ["Register"]
-        menu_icons = ["key"]
-    
-    # Ensure we always have valid options
-    if not menu_options:
-        menu_options = ["Register"]
-        menu_icons = ["key"]
+    if authentication_status:
+        st.sidebar.title(f"Welcome {name}")
+        if "selected" not in st.session_state:
+            st.session_state.selected = "Home"
 
-    # Set default index
-    default_index = 0
-    if st.session_state.selected in menu_options:
-        default_index = menu_options.index(st.session_state.selected)
-
-    selected = option_menu(
-        menu_title="Main Menu",
-        options=menu_options,
-        icons=menu_icons,
-        menu_icon="list",
-        default_index=default_index,
-        key="main_menu"
-    )
-    st.session_state.selected = selected
-
-    if st.session_state.get("authentication_status"):
+        selected = option_menu(
+            menu_title="Main Menu",
+            options=["Home", "Sort", "History"],
+            icons=["house", "recycle", "book"],
+            menu_icon="list",
+            default_index=["Home", "Sort", "History"].index(st.session_state.selected),
+            key="main_menu"
+        )
+        st.session_state.selected = selected  # Update session state
         authenticator.logout("Logout", "sidebar")
+    else:
+        selected = option_menu(
+            menu_title="Main Menu",
+            options=["Register"],
+            icons=["key"],
+            menu_icon="list"
+        )
+
 
 # Register logic 
-if not authentication_status and st.session_state.get("selected") == "Register":
+if not authentication_status and selected == "Register":
     with st.form("register"):
         st.markdown("#### Register")
         username = st.text_input("Username")
@@ -187,6 +148,7 @@ def save_to_history(user_id, item, disposal_method):
                      INSERT INTO SortingHistory (user_ID, item, disposal_method) VALUES (%s, %s, %s) """, (user_id, item, disposal_method.lower()))
         conn.commit()
 
+        
     finally:
         cursor.close()
         conn.close()
@@ -204,7 +166,7 @@ def get_sorting_history(user_id):
     cursor.close()
     conn.close()
     return history
-
+    
 def parse_ai_response(response_text):
     if ":" in response_text:
         item, method = response_text.split(":", 1)
@@ -281,15 +243,13 @@ if authentication_status and "selected" in st.session_state:
 
     elif st.session_state.selected == "Sort":
         st.subheader("Sort Waste into Trash, Recycle, or Compost")
-        tab1, tab2 = st.tabs(["Text", "Image"])
-        with tab1:
-            user_input = st.text_input("Describe the waste you want to dispose:")
+        user_input = st.text_input("Describe the waste you want to dispose:")
 
-            if st.button("Sort", key="send_msg") and user_input:
-                response_text = sort.get_gemini_response(user_input)
-                st.write(response_text)
-                st.session_state['last_response'] = response_text
-                st.session_state['sort_clicked'] = True  # Set flag
+        if st.button("Sort", key="send_msg") and user_input:
+            response_text = sort.get_gemini_response(user_input)
+            st.write(response_text)
+            st.session_state['last_response'] = response_text
+            st.session_state['sort_clicked'] = True  # Set flag
 
         if 'last_response' in st.session_state and st.session_state.get('sort_clicked', False):
             if st.button("Save"):
@@ -305,36 +265,10 @@ if authentication_status and "selected" in st.session_state:
                 else:
                     st.error('Cannot save: invalid input or disposal method')
 
-        with tab2:
-            image_file = st.file_uploader("Upload an image of an item", type=["jpg", "png", "jpeg"])
-            if image_file is not None:
-                img = Image.open(image_file)
-                st.image(img, caption="Uploaded Image", use_column_width=True)
-
-            if st.button("Analyze Image", key="analyze_image"):
-                response_text = sort.get_sorting_from_image(img)
-                st.write(response_text)
-                st.session_state['last_response'] = response_text
-                st.session_state['analyze_image_clicked'] = True
-
-            if 'last_response' in st.session_state and st.session_state.get('analyze_image_clicked', False):
-                user_input = st.session_state['last_response'].split('{')[1].split('}')[0]
-                if st.button("Save Image"):
-                    disposal_method, explanation = parse_ai_response(st.session_state['last_response'])
-                    valid_methods = ['trash', 'recycle', 'compost']
-                    # Basic sanity checks
-                    if (disposal_method.lower() in valid_methods
-                        and user_input.strip()
-                        and len(user_input.strip()) > 2):
-                        user_id = get_user_id(email)
-                        save_to_history(user_id, user_input, disposal_method)
-                        st.success('Saved to history!')
-                    else:
-                        st.error('Cannot save: invalid input or disposal method')
-        
     elif st.session_state.selected == "History":
         st.subheader("View how much waste you have sorted")
         user_id = get_user_id(email)
+
         tab1, tab2 = st.tabs(["Statistics", "History"])
         with tab1:
             st.subheader("Statistics")
@@ -401,4 +335,3 @@ if authentication_status and "selected" in st.session_state:
                 )
             else:
                 st.info("No sorting history to display.")
-
