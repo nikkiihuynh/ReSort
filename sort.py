@@ -1,7 +1,8 @@
-import os 
+import os
 from dotenv import load_dotenv
 import streamlit as st
 import google.generativeai as genai
+from PIL import Image
 
 load_dotenv()
 genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
@@ -28,4 +29,15 @@ def get_targeted_tips(history):
         "Provide 3 targeted tips to help the user improve their sorting habits."
     )
     response = model.generate_content(prompt)
+    return response.text
+
+def get_sorting_from_image(image):
+    model = genai.GenerativeModel('gemini-1.5-pro')
+    prompt = """
+    You are a helpful assistant and waste management expert. 
+    Analyze the object in this image and decide how it should be disposed of: Trash, Recycle, or Compost.
+    Give answer in the format: <Trash, Recycle, or Compost>:< { object } with those brackets > <brief explanation on why> Only give one option 
+    """
+    
+    response = model.generate_content([prompt, image])
     return response.text
