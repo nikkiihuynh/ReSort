@@ -3,7 +3,7 @@ from streamlit_option_menu import option_menu
 import mysql.connector
 import sort
 import streamlit_authenticator as stauth
-from streamlit_authenticator.utilities.hasher import Hasher
+from streamlit_authenticator import Hasher
 import plotly.express as px
 import pandas as pd
 
