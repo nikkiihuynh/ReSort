@@ -48,7 +48,7 @@ pip install -r requirements.txt
    CREATE DATABASE resort_db;
    USE resort_db;
    ```
-   - Go to File > Open SQL Script and select your database.sql.
+   - Go to File > Open SQL Script and select your database.sql which is located in the main branch.
    - The file will open in a new SQL tab.
    - Click the ⚡ Execute button (lightning bolt) to run the script and the database will be set up
    - In your ReSort Project directory, go to database.py and modify the following to reflect your changes.
