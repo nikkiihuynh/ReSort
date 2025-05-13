@@ -42,7 +42,7 @@ pip install -r requirements.txt
    ```
    
 5. Database Setup:
-   - Install MySQL Server if you haven't already
+   - Install MySQL Workbench 
    - Create a new database:
    ```sql
    CREATE DATABASE resort_db;
@@ -93,17 +93,5 @@ For a complete list of dependencies, see `requirements.txt`.
 The application uses MySQL for data storage. Make sure to:
 1. Have MySQL Server running
 2. Create the database and user as described in the setup instructions
-3. Set up the `.env` file with your database credentials
-4. Ensure the MySQL service is running before starting the application
+3. Ensure the MySQL service is running before starting the application
 
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
