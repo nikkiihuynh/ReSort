@@ -1,0 +1,10 @@
+cookie:
+  expiry_days: 30
+  key: auth_key
+  name: auth_cookie
+credentials:
+  usernames:
+    testuser:
+      email: testuser@example.com
+      name: Test User
+      password: $2b$12$FzvDgT.yGPlzFh8BG7VRIOV4eAfWy6ZhMRPVvR8PbGyUk7C./HHvO
