@@ -36,4 +36,4 @@ def show():
                         st.subheader('Your Personalized Tips')
                         st.write(tips_text)
                     else:
-                        t.info('No sorting history available to generate personalized tips.')
+                        st.info('No sorting history available to generate personalized tips.')
