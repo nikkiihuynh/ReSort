@@ -33,7 +33,15 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-4. Database Setup:
+4. Get a Google Gemini Api Key
+   - Go to Google AI studio and click on create API key
+   - In the ReSort directory, create a file titled ".env"
+   - In the .env file, copy and paste the following (no quotes)
+   ```
+   GEMINI_API_KEY = "Your API Key here"
+   ```
+   
+5. Database Setup:
    - Install MySQL Server if you haven't already
    - Create a new database:
    ```sql
@@ -53,7 +61,7 @@ pip install -r requirements.txt
    DB_NAME=resort_db
    ```
 
-5. Run the application:
+6. Run the application:
 ```bash
 streamlit run app.py
 ```
