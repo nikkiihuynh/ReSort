@@ -4,36 +4,20 @@ from Modules.database import get_user_id, get_sorting_history
 from streamlit import session_state as ss
 
 def show():
-    st.subheader("Revolutionizing Waste Sorting")
-    st.image(
-        "https://media.istockphoto.com/id/962933762/vector/ecology-and-waste-global-eco-friendly-plastic.jpg?s=612x612&w=0&k=20&c=RdbOw__qI_Vc0W8pU0dEiO9--Unfs-iXUEqQOCP-1HE=",
-        width=400
+    st.markdown(
+        """
+        <div style='padding: 20px; background-color: #f0fff4; border-radius: 12px;'>
+            <p style='font-size: 18px; line-height: 1.6; color: #2E7D32;'>
+                Welcome to <strong>ReSort</strong> — your eco-friendly companion for smarter waste sorting.
+                Our goal is to help you easily classify your waste as Trash, Recycle, or Compost.
+            </p>
+            <ul style='color: #2E7D32; font-size: 16px;'>
+                <li>📦 Sort any item with text or image input</li>
+                <li>📈 View yout personalized sorting history</li>
+                <li>💡 Get targeted tips to improve your sustainability habits</li>
+            </ul>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
-    
-    if ss["authentication_status"]:
-        tab1, tab2 = st.tabs(["General Tips", "Generate Tips"])
 
-        with tab1:
-            st.markdown('### General Waste Disposal Tips')
-            tips = [
-                'Clean and dry recyclables before placing them in the bin to avoid contamination.',
-                'Flatten cardboard boxes to save space in recycling bins.',
-                'Check your local guidelines for accepted materials, as they vary by location.',
-                'Avoid bagging recyclables in plastic bags; most facilities cannot process them.',
-                'Keep a small compost bin in your kitchen for food scraps to reduce landfill waste.',
-            ]
-            for tip in tips:
-                st.markdown(f'- {tip}')
-
-        with tab2:
-            # Button to fetch personalized tips based on user history
-            if st.button('Get personalized tips'):
-                user_id = get_user_id(ss["username"])
-                if user_id:
-                    history = get_sorting_history(user_id)
-                    if history:
-                        tips_text = get_targeted_tips(history)
-                        st.subheader('Your Personalized Tips')
-                        st.write(tips_text)
-                    else:
-                        st.info('No sorting history available to generate personalized tips.')
