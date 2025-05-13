@@ -42,18 +42,16 @@ pip install -r requirements.txt
    ```
    
 5. Database Setup:
-   - Install MySQL Workbench 
+   - Install and Open MySQL Workbench 
    - Create a new database:
    ```sql
    CREATE DATABASE resort_db;
+   USE resort_db;
    ```
-   - Create a new user and grant privileges:
-   ```sql
-   CREATE USER 'resort_user'@'localhost' IDENTIFIED BY 'your_password';
-   GRANT ALL PRIVILEGES ON resort_db.* TO 'resort_user'@'localhost';
-   FLUSH PRIVILEGES;
-   ```
-   - Create a `.env` file in the project root with your database credentials:
+   - Go to File > Open SQL Script and select your database.sql.
+   - The file will open in a new SQL tab.
+   - Click the ⚡ Execute button (lightning bolt) to run the script and the database will be set up
+   - In your ReSort Project directory, go to database.py and modify the following to reflect your changes.
    ```
    DB_HOST=localhost
    DB_USER=resort_user
@@ -92,6 +90,6 @@ For a complete list of dependencies, see `requirements.txt`.
 
 The application uses MySQL for data storage. Make sure to:
 1. Have MySQL Server running
-2. Create the database and user as described in the setup instructions
+2. Create the database as described in the setup instructions
 3. Ensure the MySQL service is running before starting the application
 
