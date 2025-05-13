@@ -7,6 +7,7 @@ A Streamlit-based application for data sorting and analysis.
 - Python 3.9 or higher
 - pip (Python package installer)
 - Git
+- MySQL Server 8.0 or higher
 
 ## Setup Instructions
 
@@ -32,7 +33,27 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-4. Run the application:
+4. Database Setup:
+   - Install MySQL Server if you haven't already
+   - Create a new database:
+   ```sql
+   CREATE DATABASE resort_db;
+   ```
+   - Create a new user and grant privileges:
+   ```sql
+   CREATE USER 'resort_user'@'localhost' IDENTIFIED BY 'your_password';
+   GRANT ALL PRIVILEGES ON resort_db.* TO 'resort_user'@'localhost';
+   FLUSH PRIVILEGES;
+   ```
+   - Create a `.env` file in the project root with your database credentials:
+   ```
+   DB_HOST=localhost
+   DB_USER=resort_user
+   DB_PASSWORD=your_password
+   DB_NAME=resort_db
+   ```
+
+5. Run the application:
 ```bash
 streamlit run app.py
 ```
@@ -54,9 +75,18 @@ The project uses several key dependencies:
 - Streamlit for the web interface
 - Pandas for data manipulation
 - NumPy for numerical operations
+- MySQL Connector for database operations
 - Various Google AI and authentication libraries
 
 For a complete list of dependencies, see `requirements.txt`.
+
+## Database Configuration
+
+The application uses MySQL for data storage. Make sure to:
+1. Have MySQL Server running
+2. Create the database and user as described in the setup instructions
+3. Set up the `.env` file with your database credentials
+4. Ensure the MySQL service is running before starting the application
 
 ## Contributing
 
