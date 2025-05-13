@@ -1,6 +1,6 @@
 # ReSort Application
 
-A Streamlit-based application for data sorting and analysis.
+A Streamlit-based application for waste sorting, tracking, and tips.
 
 ## Prerequisites
 
