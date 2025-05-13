@@ -46,7 +46,7 @@ def show():
         image_file = st.file_uploader("Upload an image of an item", type=["jpg", "png", "jpeg"])
         if image_file is not None:
             img = Image.open(image_file)
-            st.image(img, caption="Uploaded Image", use_column_width=True)
+            st.image(img, caption="Uploaded Image", use_container_width=True)
 
         if st.button("Analyze Image", key="analyze_image"):
             response_text = get_sorting_from_image(img)
