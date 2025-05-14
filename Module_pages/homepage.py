@@ -20,4 +20,3 @@ def show():
         """,
         unsafe_allow_html=True
     )
-
