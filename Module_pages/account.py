@@ -11,16 +11,17 @@ CONFIG_FILENAME = 'config.yaml'
 with open('config.yaml') as file:
     config = yaml.load(file, Loader=SafeLoader)
 
-credentials = fetch_users_from_db()
-
-authenticator = stauth.Authenticate(
-    credentials,
-    config['cookie']['name'],
-    config['cookie']['key'],
-    config['cookie']['expiry_days'],
-)
 
 def show():
+    credentials = fetch_users_from_db()
+
+    authenticator = stauth.Authenticate(
+        credentials,
+        config['cookie']['name'],
+        config['cookie']['key'],
+        config['cookie']['expiry_days'],
+    )
+
     if "logout" not in st.session_state:
         st.session_state["logout"] = False
 
@@ -62,6 +63,7 @@ def show():
                             hashed_pw = Hasher([password]).generate()[0]
                             insert_user(username, email, hashed_pw)
                             st.success("Registration successful! You can now log in.")
+                            st.rerun() 
                     else:
                         st.error("Please fill in all fields.")
 

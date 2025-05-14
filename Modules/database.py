@@ -113,3 +113,4 @@ def get_sorting_history(user_id):
     cursor.close()
     conn.close()
     return history
+

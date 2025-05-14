@@ -29,6 +29,18 @@ def show():
             title='Trash Sorted'
         )
 
+        fig.update_layout(
+            paper_bgcolor='#f4f7e9',     # Outer background (around the chart)
+            plot_bgcolor='#f0fff4',      # Chart background
+            title_font=dict(size=20, color='#1b5e20'),  # Title color
+            legend=dict(
+                bgcolor='#e6f4ea',
+                bordercolor='#1b5e20',
+                borderwidth=1,
+                font=dict(color='#1b5e20')
+            )
+        )
+
         st.plotly_chart(fig)
 
         col1, col2, col3 = st.columns(3)
@@ -56,7 +68,7 @@ def show():
             def color_code(val):
                 colors = {
                     'Trash': '#F8D32B',
-                    'Recycle': '#2154DC',
+                    'Recycle': '#386cff',
                     'Compost': '#1FAA21'
                 }
                 return f'background-color: {colors.get(val,"")}'

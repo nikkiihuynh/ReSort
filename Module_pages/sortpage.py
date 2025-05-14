@@ -22,12 +22,12 @@ def show():
         if st.button("Sort", key="send_msg") and user_input:
             response_text = get_gemini_response(user_input)
             st.write(response_text)
-            st.session_state['last_response'] = response_text
+            st.session_state['last_text_response'] = response_text
             st.session_state['sort_clicked'] = True  # Set flag
 
-        if 'last_response' in st.session_state and st.session_state.get('sort_clicked', False):
+        if 'last_text_response' in st.session_state and st.session_state.get('sort_clicked', False):
             if st.button("Save"):
-                disposal_method, explanation = parse_ai_response(st.session_state['last_response'])
+                disposal_method, explanation = parse_ai_response(st.session_state['last_text_response'])
                 valid_methods = ['trash', 'recycle', 'compost']
               
                 disposal_method_clean = clean_method(disposal_method)
@@ -46,7 +46,7 @@ def show():
         image_file = st.file_uploader("Upload an image of an item", type=["jpg", "png", "jpeg"])
         if image_file is not None:
             img = Image.open(image_file)
-            st.image(img, caption="Uploaded Image", use_column_width=True)
+            st.image(img, caption="Uploaded Image", use_container_width=True)
 
         if st.button("Analyze Image", key="analyze_image"):
             response_text = get_sorting_from_image(img)
