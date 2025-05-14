@@ -57,7 +57,3 @@ elif selected_page == "Tips":
     tipsPage.show()   
 elif selected_page == "History":
     history.show()
-
-
-
-

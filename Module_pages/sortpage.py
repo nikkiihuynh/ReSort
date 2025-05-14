@@ -22,12 +22,12 @@ def show():
         if st.button("Sort", key="send_msg") and user_input:
             response_text = get_gemini_response(user_input)
             st.write(response_text)
-            st.session_state['last_response'] = response_text
+            st.session_state['last_text_response'] = response_text
             st.session_state['sort_clicked'] = True  # Set flag
 
-        if 'last_response' in st.session_state and st.session_state.get('sort_clicked', False):
+        if 'last_text_response' in st.session_state and st.session_state.get('sort_clicked', False):
             if st.button("Save"):
-                disposal_method, explanation = parse_ai_response(st.session_state['last_response'])
+                disposal_method, explanation = parse_ai_response(st.session_state['last_text_response'])
                 valid_methods = ['trash', 'recycle', 'compost']
               
                 disposal_method_clean = clean_method(disposal_method)
