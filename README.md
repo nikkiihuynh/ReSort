@@ -79,7 +79,7 @@ The application will be available at http://localhost:8501
 
 The project uses several key dependencies:
 - Streamlit for the web interface
-- Pandas for data manipulation
+- Pandas for data visualization
 - NumPy for numerical operations
 - MySQL Connector for database operations
 - Various Google AI and authentication libraries
